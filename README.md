@@ -1,6 +1,15 @@
 # idle-evaluation
 
-Rigorous evaluation framework for measuring how the [idle](https://github.com/evil-mind-evil-sword/idle) plugin improves Claude Code's capabilities on long-horizon tasks with low failure tolerance.
+**Evaluation framework for idle.** Measure quality gates on long-horizon tasks.
+
+Reproducible experiments comparing Claude Code with and without the [idle](https://github.com/evil-mind-evil-sword/idle) plugin on tasks requiring many steps and low failure tolerance.
+
+## Why?
+
+- **Reproducible** — Automated runners with fixed seeds and conditions
+- **Multi-Benchmark** — τ-Bench, MAKER-inspired, SWE-bench subset
+- **Ablation Ready** — Compare full idle, no-alice, sonnet-alice variants
+- **Cost Tracking** — Tokens per success alongside pass rates
 
 ## Overview
 
