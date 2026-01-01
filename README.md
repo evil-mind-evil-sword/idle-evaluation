@@ -1,0 +1,103 @@
+# idle-evaluation
+
+Rigorous evaluation framework for measuring how the [idle](https://github.com/evil-mind-evil-sword/idle) plugin improves Claude Code's capabilities on long-horizon tasks with low failure tolerance.
+
+## Overview
+
+This repository contains reproducible experiments comparing:
+
+| Condition | Description |
+|-----------|-------------|
+| **baseline** | Vanilla Claude Code (Sonnet) |
+| **idle-full** | Claude Code + idle plugin (alice reviewer) |
+| **idle-no-alice** | idle with review disabled (ablation) |
+| **idle-sonnet-alice** | idle with Sonnet reviewer (quality ablation) |
+
+## Experiments
+
+### 1. Long-Horizon Reliability (τ-Bench inspired)
+
+Multi-step conversational coding tasks requiring 20-50 agent steps.
+
+```bash
+python experiments/long-horizon/runner.py --condition baseline --runs 5
+python experiments/long-horizon/runner.py --condition idle-full --runs 5
+```
+
+### 2. Error Accumulation (MAKER inspired)
+
+Tasks with many dependent steps where errors compound:
+- Towers of Hanoi (100-1000 steps)
+- Chain-of-file-edits
+
+```bash
+python experiments/error-correction/runner.py --task hanoi --disks 10
+```
+
+### 3. SWE-bench Subset
+
+Curated subset of 20-30 real GitHub issues.
+
+```bash
+python experiments/swe-bench/runner.py --condition idle-full --runs 5
+```
+
+## Metrics
+
+| Metric | Description | Source |
+|--------|-------------|--------|
+| **pass^k** | Reliability across k repeated runs | τ-Bench |
+| **per-step error rate** | ε = errors / total_steps | MAKER |
+| **task completion rate** | Binary success per task | Standard |
+| **cost per success** | API tokens per completed task | Efficiency |
+
+## Quick Start
+
+```bash
+# Setup
+./scripts/setup.sh
+
+# Run full evaluation suite
+./scripts/run_all.sh
+
+# Generate figures
+python figures/generate.py
+
+# View results
+cat results/summary.json
+```
+
+## Repository Structure
+
+```
+idle-evaluation/
+├── experiments/
+│   ├── long-horizon/       # τ-Bench style experiments
+│   ├── error-correction/   # MAKER-inspired error tests
+│   └── swe-bench/          # GitHub issue resolution
+├── harnesses/              # Condition configurations
+├── metrics/                # Metric implementations
+├── figures/                # Figure generation
+├── report/                 # Technical report
+├── results/                # Experiment outputs
+└── scripts/                # Automation
+```
+
+## Citations
+
+This evaluation framework draws from:
+
+- **τ-Bench**: Sierra AI's long-horizon conversational benchmark
+- **MAKER**: Cognizant/UT Austin's million-step zero-error framework ([arXiv:2511.09030](https://arxiv.org/abs/2511.09030))
+- **SWE-bench**: Princeton's real-world software engineering benchmark ([ICLR 2024](https://www.swebench.com/))
+- **Terminal-Bench**: Stanford/Laude Institute CLI workflow benchmark
+
+## License
+
+MIT
+
+## Related
+
+- [idle](https://github.com/evil-mind-evil-sword/idle) - Quality gate plugin for Claude Code
+- [tissue](https://github.com/evil-mind-evil-sword/tissue) - Issue tracking for agents
+- [zawinski](https://github.com/evil-mind-evil-sword/zawinski) - Messaging for agents

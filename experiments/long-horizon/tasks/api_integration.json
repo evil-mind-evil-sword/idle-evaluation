@@ -1,0 +1,16 @@
+{
+  "id": "lh-001",
+  "name": "REST API Integration",
+  "description": "Build a Python client for a mock REST API with error handling and retries",
+  "prompt": "Create a Python REST API client in api_client.py that:\n\n1. Connects to https://jsonplaceholder.typicode.com\n2. Implements GET, POST, PUT, DELETE for /posts endpoint\n3. Adds exponential backoff retry (3 attempts)\n4. Includes proper error handling with custom exceptions\n5. Add type hints throughout\n6. Write tests in test_api_client.py covering all methods\n7. Ensure tests pass\n\nCreate a well-structured, production-quality implementation.",
+  "expected_steps": 25,
+  "success_criteria": [
+    "file:api_client.py",
+    "file:test_api_client.py",
+    "contains:class APIClient",
+    "contains:def get(",
+    "contains:def post(",
+    "contains:retry"
+  ],
+  "verification_script": "verify_api_integration.sh"
+}

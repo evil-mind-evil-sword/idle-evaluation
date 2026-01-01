@@ -1,0 +1,16 @@
+{
+  "id": "lh-002",
+  "name": "Multi-File Refactoring",
+  "description": "Refactor a monolithic file into modular components with proper imports",
+  "prompt": "I have a monolithic Python file that needs refactoring.\n\nCreate a file called monolith.py with this content:\n```python\nclass Database:\n    def __init__(self, connection_string):\n        self.conn = connection_string\n    def query(self, sql): return f\"Query: {sql}\"\n    def insert(self, table, data): return f\"Insert into {table}\"\n\nclass UserService:\n    def __init__(self, db):\n        self.db = db\n    def get_user(self, id): return self.db.query(f\"SELECT * FROM users WHERE id={id}\")\n    def create_user(self, name): return self.db.insert(\"users\", {\"name\": name})\n\nclass ProductService:\n    def __init__(self, db):\n        self.db = db\n    def get_product(self, id): return self.db.query(f\"SELECT * FROM products WHERE id={id}\")\n    def list_products(self): return self.db.query(\"SELECT * FROM products\")\n\nclass OrderService:\n    def __init__(self, db, user_svc, product_svc):\n        self.db = db\n        self.user_svc = user_svc\n        self.product_svc = product_svc\n    def create_order(self, user_id, product_id):\n        user = self.user_svc.get_user(user_id)\n        product = self.product_svc.get_product(product_id)\n        return self.db.insert(\"orders\", {\"user\": user, \"product\": product})\n```\n\nNow refactor into:\n- database.py (Database class)\n- services/user_service.py\n- services/product_service.py  \n- services/order_service.py\n- main.py (imports and uses all services)\n- tests/test_services.py\n\nEnsure imports work correctly and tests pass.",
+  "expected_steps": 35,
+  "success_criteria": [
+    "file:database.py",
+    "file:services/user_service.py",
+    "file:services/product_service.py",
+    "file:services/order_service.py",
+    "file:main.py",
+    "contains:from database import",
+    "contains:from services"
+  ]
+}

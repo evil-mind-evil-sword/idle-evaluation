@@ -1,0 +1,16 @@
+{
+  "name": "idle-sonnet-alice",
+  "description": "idle plugin with Sonnet alice instead of Opus (reviewer quality ablation)",
+  "model": "claude-sonnet-4-20250514",
+  "idle_enabled": true,
+  "alice_enabled": true,
+  "alice_model": "claude-sonnet-4-20250514",
+  "multi_model_consensus": false,
+  "environment": {},
+  "idle_config": {
+    "hooks_dir": "idle/hooks",
+    "agents_dir": "idle/agents",
+    "skills_dir": "idle/skills"
+  },
+  "notes": "Ablation: measures value of Opus-level reviewer and multi-model consensus"
+}

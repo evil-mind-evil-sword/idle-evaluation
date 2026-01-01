@@ -1,0 +1,16 @@
+{
+  "name": "idle-no-alice",
+  "description": "idle plugin with alice review disabled (ablation study)",
+  "model": "claude-sonnet-4-20250514",
+  "idle_enabled": true,
+  "alice_enabled": false,
+  "multi_model_consensus": true,
+  "environment": {},
+  "idle_config": {
+    "hooks_dir": "idle/hooks",
+    "agents_dir": "idle/agents",
+    "skills_dir": "idle/skills",
+    "disabled_file": ".idle-disabled"
+  },
+  "notes": "Ablation: measures value of alice peer review by disabling it"
+}

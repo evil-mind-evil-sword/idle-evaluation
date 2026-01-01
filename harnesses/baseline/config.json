@@ -1,0 +1,13 @@
+{
+  "name": "baseline",
+  "description": "Vanilla Claude Code without idle plugin",
+  "model": "claude-sonnet-4-20250514",
+  "idle_enabled": false,
+  "alice_enabled": false,
+  "multi_model_consensus": false,
+  "environment": {
+    "IDLE_DISABLED": "1"
+  },
+  "claude_code_args": [],
+  "notes": "Control condition - standard Claude Code behavior"
+}
