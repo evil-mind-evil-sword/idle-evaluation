@@ -42,6 +42,24 @@ Curated subset of 20-30 real GitHub issues.
 python experiments/swe_bench/runner.py --condition idle-full --runs 5
 ```
 
+### 4. τ-bench (Recommended)
+
+Long-horizon conversational workflows with pass^k reliability metrics.
+Best benchmark for testing idle's value on complex, multi-turn tasks.
+
+```bash
+# Install τ-bench
+uv pip install git+https://github.com/sierra-research/tau-bench
+
+# Run comparison (baseline vs idle-full)
+python experiments/tau_bench/runner.py --env retail --trials 3
+
+# Run specific condition
+python experiments/tau_bench/runner.py --env retail --condition idle-full --trials 5
+```
+
+See [benchmark_research.md](report/benchmark_research.md) for detailed analysis of benchmark options.
+
 ## Metrics
 
 | Metric | Description | Source |

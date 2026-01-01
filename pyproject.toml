@@ -15,6 +15,10 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.1",
 ]
+benchmarks = [
+    "tau-bench @ git+https://github.com/sierra-research/tau-bench",
+    "datasets>=2.0",  # For SWE-bench
+]
 
 [tool.uv]
 dev-dependencies = [
