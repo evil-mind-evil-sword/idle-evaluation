@@ -7,9 +7,9 @@
   "multi_model_consensus": true,
   "environment": {},
   "idle_config": {
-    "hooks_dir": "idle/hooks",
-    "agents_dir": "idle/agents",
-    "skills_dir": "idle/skills",
+    "hooks_dir": "../../../idle/hooks",
+    "agents_dir": "../../../idle/agents",
+    "skills_dir": "../../../idle/skills",
     "disabled_file": ".idle-disabled"
   },
   "notes": "Ablation: measures value of alice peer review by disabling it"

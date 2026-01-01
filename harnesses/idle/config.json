@@ -9,9 +9,9 @@
   "environment": {},
   "claude_code_args": [],
   "idle_config": {
-    "hooks_dir": "idle/hooks",
-    "agents_dir": "idle/agents",
-    "skills_dir": "idle/skills"
+    "hooks_dir": "../../../idle/hooks",
+    "agents_dir": "../../../idle/agents",
+    "skills_dir": "../../../idle/skills"
   },
   "notes": "Full treatment condition - mandatory alice review before exit"
 }
