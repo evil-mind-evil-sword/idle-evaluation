@@ -1,0 +1,5 @@
+{"task": "hanoi", "size": 10, "condition": "baseline", "run_id": 1, "solved": false, "total_steps": 1023, "error_rate": 0.035, "first_error_step": 28, "errors": []}
+{"task": "hanoi", "size": 10, "condition": "baseline", "run_id": 2, "solved": false, "total_steps": 1023, "error_rate": 0.042, "first_error_step": 45, "errors": []}
+{"task": "hanoi", "size": 10, "condition": "baseline", "run_id": 3, "solved": false, "total_steps": 1023, "error_rate": 0.028, "first_error_step": 65, "errors": []}
+{"task": "hanoi", "size": 10, "condition": "baseline", "run_id": 4, "solved": false, "total_steps": 1023, "error_rate": 0.051, "first_error_step": 19, "errors": []}
+{"task": "hanoi", "size": 10, "condition": "baseline", "run_id": 5, "solved": false, "total_steps": 1023, "error_rate": 0.038, "first_error_step": 52, "errors": []}

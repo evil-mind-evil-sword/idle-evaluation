@@ -1,0 +1,15 @@
+{"task_id": "lh-001", "condition": "baseline", "run_id": 1, "success": true, "steps": 32, "tokens": 15000, "duration_seconds": 45.2}
+{"task_id": "lh-001", "condition": "baseline", "run_id": 2, "success": true, "steps": 35, "tokens": 16200, "duration_seconds": 48.1}
+{"task_id": "lh-001", "condition": "baseline", "run_id": 3, "success": false, "steps": 28, "tokens": 12000, "duration_seconds": 38.5}
+{"task_id": "lh-001", "condition": "baseline", "run_id": 4, "success": true, "steps": 30, "tokens": 14500, "duration_seconds": 42.3}
+{"task_id": "lh-001", "condition": "baseline", "run_id": 5, "success": false, "steps": 25, "tokens": 11000, "duration_seconds": 35.0}
+{"task_id": "lh-002", "condition": "baseline", "run_id": 1, "success": false, "steps": 42, "tokens": 20000, "duration_seconds": 65.0}
+{"task_id": "lh-002", "condition": "baseline", "run_id": 2, "success": true, "steps": 45, "tokens": 22000, "duration_seconds": 70.2}
+{"task_id": "lh-002", "condition": "baseline", "run_id": 3, "success": false, "steps": 38, "tokens": 18000, "duration_seconds": 58.1}
+{"task_id": "lh-002", "condition": "baseline", "run_id": 4, "success": false, "steps": 40, "tokens": 19000, "duration_seconds": 62.0}
+{"task_id": "lh-002", "condition": "baseline", "run_id": 5, "success": true, "steps": 48, "tokens": 23000, "duration_seconds": 75.5}
+{"task_id": "lh-003", "condition": "baseline", "run_id": 1, "success": false, "steps": 55, "tokens": 28000, "duration_seconds": 90.0}
+{"task_id": "lh-003", "condition": "baseline", "run_id": 2, "success": false, "steps": 52, "tokens": 26000, "duration_seconds": 85.2}
+{"task_id": "lh-003", "condition": "baseline", "run_id": 3, "success": true, "steps": 60, "tokens": 30000, "duration_seconds": 95.1}
+{"task_id": "lh-003", "condition": "baseline", "run_id": 4, "success": false, "steps": 50, "tokens": 25000, "duration_seconds": 82.0}
+{"task_id": "lh-003", "condition": "baseline", "run_id": 5, "success": false, "steps": 48, "tokens": 24000, "duration_seconds": 78.5}

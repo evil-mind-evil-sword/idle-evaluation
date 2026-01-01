@@ -1,0 +1,15 @@
+{"task_id": "lh-001", "condition": "idle-no-alice", "run_id": 1, "success": true, "steps": 30, "tokens": 14000, "duration_seconds": 42.2}
+{"task_id": "lh-001", "condition": "idle-no-alice", "run_id": 2, "success": true, "steps": 32, "tokens": 15000, "duration_seconds": 45.1}
+{"task_id": "lh-001", "condition": "idle-no-alice", "run_id": 3, "success": false, "steps": 26, "tokens": 12000, "duration_seconds": 36.5}
+{"task_id": "lh-001", "condition": "idle-no-alice", "run_id": 4, "success": true, "steps": 28, "tokens": 13000, "duration_seconds": 40.3}
+{"task_id": "lh-001", "condition": "idle-no-alice", "run_id": 5, "success": true, "steps": 31, "tokens": 14500, "duration_seconds": 44.0}
+{"task_id": "lh-002", "condition": "idle-no-alice", "run_id": 1, "success": true, "steps": 44, "tokens": 21000, "duration_seconds": 68.0}
+{"task_id": "lh-002", "condition": "idle-no-alice", "run_id": 2, "success": false, "steps": 40, "tokens": 19000, "duration_seconds": 62.2}
+{"task_id": "lh-002", "condition": "idle-no-alice", "run_id": 3, "success": true, "steps": 46, "tokens": 22000, "duration_seconds": 72.1}
+{"task_id": "lh-002", "condition": "idle-no-alice", "run_id": 4, "success": false, "steps": 38, "tokens": 18000, "duration_seconds": 58.0}
+{"task_id": "lh-002", "condition": "idle-no-alice", "run_id": 5, "success": true, "steps": 42, "tokens": 20000, "duration_seconds": 65.5}
+{"task_id": "lh-003", "condition": "idle-no-alice", "run_id": 1, "success": true, "steps": 56, "tokens": 27000, "duration_seconds": 88.0}
+{"task_id": "lh-003", "condition": "idle-no-alice", "run_id": 2, "success": false, "steps": 50, "tokens": 24000, "duration_seconds": 80.2}
+{"task_id": "lh-003", "condition": "idle-no-alice", "run_id": 3, "success": true, "steps": 58, "tokens": 28000, "duration_seconds": 92.1}
+{"task_id": "lh-003", "condition": "idle-no-alice", "run_id": 4, "success": false, "steps": 48, "tokens": 23000, "duration_seconds": 76.0}
+{"task_id": "lh-003", "condition": "idle-no-alice", "run_id": 5, "success": true, "steps": 54, "tokens": 26000, "duration_seconds": 85.5}
