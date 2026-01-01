@@ -1,0 +1,2 @@
+{"task_id": "calculator", "condition": "baseline", "run_id": 1, "success": true, "duration_seconds": 54.88484716415405, "output_lines": 5, "error": null}
+{"task_id": "calculator", "condition": "baseline", "run_id": 2, "success": true, "duration_seconds": 55.97931218147278, "output_lines": 5, "error": null}

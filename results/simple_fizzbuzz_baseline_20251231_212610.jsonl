@@ -1,0 +1,2 @@
+{"task_id": "fizzbuzz", "condition": "baseline", "run_id": 1, "success": true, "duration_seconds": 52.69981026649475, "output_lines": 1, "error": null}
+{"task_id": "fizzbuzz", "condition": "baseline", "run_id": 2, "success": true, "duration_seconds": 50.095473289489746, "output_lines": 1, "error": null}

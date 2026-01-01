@@ -1,24 +1,23 @@
 #!/usr/bin/env bash
-# Setup script for idle-evaluation
+# Setup script for idle-evaluation using uv
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
-echo "Setting up idle-evaluation..."
+echo "Setting up idle-evaluation with uv..."
 
-# Create virtual environment if it doesn't exist
-if [[ ! -d "$REPO_ROOT/.venv" ]]; then
-    echo "Creating virtual environment..."
-    python3 -m venv "$REPO_ROOT/.venv"
+# Check for uv
+if ! command -v uv &> /dev/null; then
+    echo "Error: uv not found. Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
+    exit 1
 fi
 
-# Activate and install dependencies
-source "$REPO_ROOT/.venv/bin/activate"
+cd "$REPO_ROOT"
 
-echo "Installing dependencies..."
-pip install --upgrade pip
-pip install matplotlib numpy seaborn
+# Sync dependencies
+echo "Syncing dependencies..."
+uv sync
 
 # Create necessary directories
 mkdir -p "$REPO_ROOT/results"
@@ -32,15 +31,7 @@ else
     echo "Claude Code found: $(which claude)"
 fi
 
-# Check for idle plugin
-if [[ -d "$HOME/.claude/plugins/idle" ]]; then
-    echo "idle plugin found"
-else
-    echo "Note: idle plugin not found at ~/.claude/plugins/idle"
-    echo "Install idle for idle-full experiments"
-fi
-
 echo ""
 echo "Setup complete!"
-echo "Activate with: source $REPO_ROOT/.venv/bin/activate"
-echo "Run experiments with: ./scripts/run_all.sh"
+echo "Run experiments with: uv run scripts/run_all.sh"
+echo "Or activate: source .venv/bin/activate"

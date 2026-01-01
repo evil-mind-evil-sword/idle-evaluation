@@ -1,5 +1,0 @@
-{"task": "hanoi", "size": 10, "condition": "idle-full", "run_id": 1, "solved": true, "total_steps": 1023, "error_rate": 0.002, "first_error_step": null, "errors": []}
-{"task": "hanoi", "size": 10, "condition": "idle-full", "run_id": 2, "solved": true, "total_steps": 1023, "error_rate": 0.001, "first_error_step": null, "errors": []}
-{"task": "hanoi", "size": 10, "condition": "idle-full", "run_id": 3, "solved": true, "total_steps": 1023, "error_rate": 0.003, "first_error_step": null, "errors": []}
-{"task": "hanoi", "size": 10, "condition": "idle-full", "run_id": 4, "solved": false, "total_steps": 1023, "error_rate": 0.008, "first_error_step": 512, "errors": []}
-{"task": "hanoi", "size": 10, "condition": "idle-full", "run_id": 5, "solved": true, "total_steps": 1023, "error_rate": 0.002, "first_error_step": null, "errors": []}
