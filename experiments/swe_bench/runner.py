@@ -219,7 +219,7 @@ def run_experiment(
     issues = load_issues(issues_file)
 
     if not issues:
-        print("No issues found. Add issues to experiments/swe-bench/selected_issues.json")
+        print("No issues found. Add issues to experiments/swe_bench/selected_issues.json")
         print("\nExpected format:")
         print(json.dumps({
             "instance_id": "repo__issue__commit",

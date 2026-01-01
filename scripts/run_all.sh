@@ -19,7 +19,7 @@ CONDITIONS=("baseline" "idle-full" "idle-no-alice" "idle-sonnet-alice")
 echo "=== Long-Horizon Experiments ==="
 for cond in "${CONDITIONS[@]}"; do
     echo "Running $cond..."
-    python "$REPO_ROOT/experiments/long-horizon/runner.py" \
+    python "$REPO_ROOT/experiments/long_horizon/runner.py" \
         --condition "$cond" \
         --runs "$RUNS" \
         --output-dir "$REPO_ROOT/results" || true
@@ -30,7 +30,7 @@ echo ""
 echo "=== Error Accumulation Experiments ==="
 for cond in "${CONDITIONS[@]}"; do
     echo "Running Hanoi (10 disks) for $cond..."
-    python "$REPO_ROOT/experiments/error-correction/runner.py" \
+    python "$REPO_ROOT/experiments/error_correction/runner.py" \
         --task hanoi \
         --size 10 \
         --condition "$cond" \
@@ -39,12 +39,12 @@ for cond in "${CONDITIONS[@]}"; do
 done
 
 # SWE-bench experiments (if issues configured)
-if [[ -f "$REPO_ROOT/experiments/swe-bench/selected_issues.json" ]]; then
+if [[ -f "$REPO_ROOT/experiments/swe_bench/selected_issues.json" ]]; then
     echo ""
     echo "=== SWE-bench Experiments ==="
     for cond in "${CONDITIONS[@]}"; do
         echo "Running SWE-bench for $cond..."
-        python "$REPO_ROOT/experiments/swe-bench/runner.py" \
+        python "$REPO_ROOT/experiments/swe_bench/runner.py" \
             --condition "$cond" \
             --runs "$RUNS" \
             --output-dir "$REPO_ROOT/results" || true
@@ -64,7 +64,7 @@ python "$REPO_ROOT/figures/generate.py" \
 # Run analysis
 echo ""
 echo "=== Analysis ==="
-python "$REPO_ROOT/experiments/long-horizon/analysis.py" \
+python "$REPO_ROOT/experiments/long_horizon/analysis.py" \
     --results-dir "$REPO_ROOT/results" \
     --output "$REPO_ROOT/results/analysis.json" || true
 

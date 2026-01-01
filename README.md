@@ -20,8 +20,8 @@ This repository contains reproducible experiments comparing:
 Multi-step conversational coding tasks requiring 20-50 agent steps.
 
 ```bash
-python experiments/long-horizon/runner.py --condition baseline --runs 5
-python experiments/long-horizon/runner.py --condition idle-full --runs 5
+python experiments/long_horizon/runner.py --condition baseline --runs 5
+python experiments/long_horizon/runner.py --condition idle-full --runs 5
 ```
 
 ### 2. Error Accumulation (MAKER inspired)
@@ -31,7 +31,7 @@ Tasks with many dependent steps where errors compound:
 - Chain-of-file-edits
 
 ```bash
-python experiments/error-correction/runner.py --task hanoi --disks 10
+python experiments/error_correction/runner.py --task hanoi --disks 10
 ```
 
 ### 3. SWE-bench Subset
@@ -39,7 +39,7 @@ python experiments/error-correction/runner.py --task hanoi --disks 10
 Curated subset of 20-30 real GitHub issues.
 
 ```bash
-python experiments/swe-bench/runner.py --condition idle-full --runs 5
+python experiments/swe_bench/runner.py --condition idle-full --runs 5
 ```
 
 ## Metrics
@@ -72,9 +72,9 @@ cat results/summary.json
 ```
 idle-evaluation/
 ├── experiments/
-│   ├── long-horizon/       # τ-Bench style experiments
-│   ├── error-correction/   # MAKER-inspired error tests
-│   └── swe-bench/          # GitHub issue resolution
+│   ├── long_horizon/       # τ-Bench style experiments
+│   ├── error_correction/   # MAKER-inspired error tests
+│   └── swe_bench/          # GitHub issue resolution
 ├── harnesses/              # Condition configurations
 ├── metrics/                # Metric implementations
 ├── figures/                # Figure generation

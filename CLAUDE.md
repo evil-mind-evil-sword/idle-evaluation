@@ -14,17 +14,17 @@ This repository measures how idle improves Claude Code through:
 
 ### Long-Horizon Tasks
 ```bash
-python experiments/long-horizon/runner.py --condition <baseline|idle-full|idle-no-alice> --runs 5
+python experiments/long_horizon/runner.py --condition <baseline|idle-full|idle-no-alice> --runs 5
 ```
 
 ### Error Accumulation
 ```bash
-python experiments/error-correction/runner.py --task hanoi --disks 10 --condition <condition>
+python experiments/error_correction/runner.py --task hanoi --disks 10 --condition <condition>
 ```
 
 ### SWE-bench Subset
 ```bash
-python experiments/swe-bench/runner.py --condition <condition> --runs 5
+python experiments/swe_bench/runner.py --condition <condition> --runs 5
 ```
 
 ## Analyzing Results
