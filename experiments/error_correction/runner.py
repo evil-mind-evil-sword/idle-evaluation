@@ -8,16 +8,81 @@ dependent steps where errors compound.
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
+import uuid
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
 
+import pexpect
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from metrics.error_rate import StepResult, per_step_error_rate, first_error_step
+
+
+def run_claude_with_hooks(
+    prompt: str,
+    work_dir: Path,
+    config: dict,
+    session_id: str = None,
+    timeout: int = 600
+) -> str:
+    """
+    Run Claude Code with hooks enabled (no --print flag).
+
+    Uses pexpect to spawn Claude in a pseudo-terminal so hooks trigger normally.
+    The Stop hook will fire when Claude tries to exit, automatically triggering
+    alice review for idle-full conditions.
+    """
+    env = os.environ.copy()
+    env.update(config.get("environment", {}))
+
+    # Apply idle_config if present (hooks, agents, skills directories)
+    idle_config = config.get("idle_config", {})
+    if idle_config.get("hooks_dir"):
+        env["CLAUDE_HOOKS_DIR"] = idle_config["hooks_dir"]
+    if idle_config.get("agents_dir"):
+        env["CLAUDE_AGENTS_DIR"] = idle_config["agents_dir"]
+    if idle_config.get("skills_dir"):
+        env["CLAUDE_SKILLS_DIR"] = idle_config["skills_dir"]
+
+    # Generate session ID if not provided
+    if session_id is None:
+        session_id = str(uuid.uuid4())
+
+    # Escape prompt for shell
+    escaped_prompt = prompt.replace('"', '\\"').replace('$', '\\$')
+    cmd = f'claude --session-id {session_id} --dangerously-skip-permissions "{escaped_prompt}"'
+
+    child = pexpect.spawn(
+        '/bin/bash', ['-c', cmd],
+        cwd=str(work_dir),
+        env=env,
+        timeout=timeout,
+        encoding='utf-8',
+        dimensions=(50, 200)  # rows, cols
+    )
+
+    output_lines = []
+    try:
+        while True:
+            try:
+                line = child.readline()
+                if not line:
+                    break
+                output_lines.append(line)
+            except pexpect.TIMEOUT:
+                break
+            except pexpect.EOF:
+                break
+    finally:
+        child.close()
+
+    return "".join(output_lines)
 
 
 @dataclass
@@ -73,10 +138,14 @@ def run_hanoi_with_agent(
     n_disks: int,
     config: dict,
     work_dir: Path,
+    condition: str = "baseline",
     max_steps: int = None
 ) -> Tuple[List[StepResult], bool]:
     """
     Run Towers of Hanoi with Claude Code agent.
+
+    For baseline: uses --print mode (fast, no hooks)
+    For idle-full: uses pexpect (hooks enabled, alice review triggers)
 
     Returns list of step results and whether puzzle was solved.
     """
@@ -92,32 +161,50 @@ Rules:
 - Only move one disk at a time
 - Never place larger disk on smaller disk
 
-Output each move as: MOVE <from_peg> <to_peg>
-Example: MOVE A C
+IMPORTANT: You MUST output each move on its own line in EXACTLY this format:
+MOVE A C
 
-Think through each move carefully. The optimal solution requires {2**n_disks - 1} moves.
+List ALL {2**n_disks - 1} moves. Do not summarize. Do not use code blocks.
+Start outputting the moves now:
 """
 
     state = HanoiState.initial(n_disks)
     goal = HanoiState.goal(n_disks)
     expected_moves = generate_hanoi_solution(n_disks)
 
-    env = dict(config.get("environment", {}))
-
-    cmd = ["claude", "--print", "--dangerously-skip-permissions", prompt]
-
     try:
-        result = subprocess.run(
-            cmd,
-            cwd=work_dir,
-            capture_output=True,
-            text=True,
-            timeout=600,
-            env={**dict(__import__('os').environ), **env}
-        )
-        output = result.stdout
+        # Generate fresh session ID to avoid context pollution
+        session_id = str(uuid.uuid4())
+
+        if condition == "baseline":
+            # Use --print for baseline (fast, no hooks)
+            env = dict(config.get("environment", {}))
+            cmd = [
+                "claude", "--print",
+                "--session-id", session_id,
+                "--dangerously-skip-permissions",
+                prompt
+            ]
+            result = subprocess.run(
+                cmd,
+                cwd=work_dir,
+                capture_output=True,
+                text=True,
+                timeout=600,
+                env={**os.environ, **env}
+            )
+            output = result.stdout + result.stderr
+        else:
+            # Use pexpect for idle conditions (hooks enabled)
+            output = run_claude_with_hooks(prompt, work_dir, config, session_id=session_id, timeout=600)
+
+        # Debug: save raw output
+        debug_file = work_dir / f"debug_output_{session_id[:8]}.txt"
+        with open(debug_file, "w") as f:
+            f.write(output)
 
     except Exception as e:
+        print(f"  Error running agent: {e}")
         return [], False
 
     # Parse moves from output
@@ -129,13 +216,17 @@ Think through each move carefully. The optimal solution requires {2**n_disks - 1
         if "MOVE" in line.upper():
             parts = line.upper().split()
             try:
+                if "MOVE" not in parts:
+                    continue
                 move_idx = parts.index("MOVE")
+                if move_idx + 2 >= len(parts):
+                    continue
                 from_peg = peg_map.get(parts[move_idx + 1], -1)
                 to_peg = peg_map.get(parts[move_idx + 2], -1)
 
                 if from_peg >= 0 and to_peg >= 0:
                     actual_moves.append((from_peg, to_peg))
-            except (IndexError, KeyError):
+            except (IndexError, KeyError, ValueError):
                 continue
 
     # Validate moves
@@ -177,13 +268,17 @@ Think through each move carefully. The optimal solution requires {2**n_disks - 1
 def run_chain_edit_experiment(
     chain_length: int,
     config: dict,
-    work_dir: Path
+    work_dir: Path,
+    condition: str = "baseline"
 ) -> Tuple[List[StepResult], bool]:
     """
     Run chain-of-file-edits experiment.
 
     Creates a chain of files where each edit depends on the previous.
     Tests error propagation in dependent multi-step tasks.
+
+    For baseline: uses --print mode (fast, no hooks)
+    For idle-full: uses pexpect (hooks enabled, alice review triggers)
     """
     # Create initial file chain
     task_dir = work_dir / f"chain_{chain_length}"
@@ -219,20 +314,31 @@ After all steps, step_{chain_length}.txt should contain "{5 * chain_length}".
 Perform each step carefully, verifying each file before proceeding.
 """
 
-    env = dict(config.get("environment", {}))
-    cmd = ["claude", "--print", "--dangerously-skip-permissions", prompt]
+    session_id = str(uuid.uuid4())
 
     try:
-        subprocess.run(
-            cmd,
-            cwd=task_dir,
-            capture_output=True,
-            text=True,
-            timeout=300,
-            env={**dict(__import__('os').environ), **env}
-        )
-    except Exception:
-        pass
+        if condition == "baseline":
+            # Use --print for baseline (fast, no hooks)
+            env = dict(config.get("environment", {}))
+            cmd = [
+                "claude", "--print",
+                "--session-id", session_id,
+                "--dangerously-skip-permissions",
+                prompt
+            ]
+            subprocess.run(
+                cmd,
+                cwd=task_dir,
+                capture_output=True,
+                text=True,
+                timeout=300,
+                env={**os.environ, **env}
+            )
+        else:
+            # Use pexpect for idle conditions (hooks enabled)
+            run_claude_with_hooks(prompt, task_dir, config, session_id=session_id, timeout=300)
+    except Exception as e:
+        print(f"  Error running agent: {e}")
 
     # Verify chain
     step_results = []
@@ -298,9 +404,9 @@ def run_experiment(
         print(f"\n=== Run {run_id}/{runs} ===")
 
         if task == "hanoi":
-            steps, solved = run_hanoi_with_agent(size, config, work_dir)
+            steps, solved = run_hanoi_with_agent(size, config, work_dir, condition)
         elif task == "chain":
-            steps, solved = run_chain_edit_experiment(size, config, work_dir)
+            steps, solved = run_chain_edit_experiment(size, config, work_dir, condition)
         else:
             print(f"Unknown task: {task}")
             return
