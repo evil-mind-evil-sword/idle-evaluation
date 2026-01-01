@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Workspaces (generated during experiments)
+workspaces/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
