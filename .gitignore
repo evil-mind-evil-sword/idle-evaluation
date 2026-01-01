@@ -6,6 +6,9 @@ __pycache__/
 # Workspaces (generated during experiments)
 workspaces/
 
+# Experiment results (generated, cleaned by `make clean`)
+results/
+
 # IDE
 .idea/
 .vscode/
