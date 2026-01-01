@@ -86,15 +86,20 @@ def plot_completion_rates(results: List[dict], output_path: Path):
     ax.set_title("Task Completion Rate by Condition", fontsize=14, fontweight="bold")
     ax.set_ylim(0, 100)
 
-    # Add value labels
+    # Add value labels (inside bars if at 100%)
     for bar, val in zip(bars, values):
+        y_pos = bar.get_height() - 5 if val >= 95 else bar.get_height() + 2
+        va = "top" if val >= 95 else "bottom"
+        color = "white" if val >= 95 else "black"
         ax.text(
             bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 2,
+            y_pos,
             f"{val:.1f}%",
             ha="center",
-            va="bottom",
-            fontsize=10
+            va=va,
+            fontsize=10,
+            color=color,
+            fontweight="bold" if val >= 95 else "normal"
         )
 
     plt.tight_layout()

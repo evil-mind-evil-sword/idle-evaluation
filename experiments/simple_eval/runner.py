@@ -103,6 +103,9 @@ def run_task(
         env["IDLE_DISABLED"] = "1"
         # Also create .idle-disabled file
         (task_dir / ".idle-disabled").touch()
+    elif condition == "idle-no-alice":
+        # idle enabled but alice review disabled
+        (task_dir / ".idle-disabled").touch()  # Disables stop hook review requirement
 
     start_time = time.time()
 
@@ -197,7 +200,8 @@ def main():
     parser = argparse.ArgumentParser(description="Run simple evaluation experiment")
     parser.add_argument("--task", required=True, choices=list(TASKS.keys()),
                        help="Task to run")
-    parser.add_argument("--condition", required=True, choices=["baseline", "idle-full"],
+    parser.add_argument("--condition", required=True,
+                       choices=["baseline", "idle-full", "idle-no-alice"],
                        help="Evaluation condition")
     parser.add_argument("--runs", type=int, default=3,
                        help="Number of runs")

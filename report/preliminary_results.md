@@ -3,8 +3,8 @@
 ## Experiment Setup
 
 - **Tasks**: fizzbuzz, calculator (simple coding tasks)
-- **Conditions**: baseline (IDLE_DISABLED=1), idle-full (normal idle)
-- **Runs**: 2 per task per condition
+- **Conditions**: baseline, idle-full, idle-no-alice (ablation)
+- **Runs**: 2-5 per task per condition (17 total runs)
 - **Date**: 2024-12-31
 
 ## Results Summary
@@ -13,17 +13,19 @@
 
 | Condition | fizzbuzz | calculator | Overall |
 |-----------|----------|------------|---------|
-| baseline | 2/2 (100%) | 2/2 (100%) | 4/4 (100%) |
-| idle-full | 2/2 (100%) | 2/2 (100%) | 4/4 (100%) |
+| baseline | 2/2 (100%) | 5/5 (100%) | 7/7 (100%) |
+| idle-full | 2/2 (100%) | 5/5 (100%) | 7/7 (100%) |
+| idle-no-alice | - | 3/3 (100%) | 3/3 (100%) |
 
 ### Duration (seconds)
 
-| Condition | fizzbuzz avg | calculator avg | Overall avg |
-|-----------|--------------|----------------|-------------|
-| baseline | 51.4s | 55.4s | 53.4s |
-| idle-full | 54.7s | 59.0s | 56.9s |
+| Condition | calculator avg | Notes |
+|-----------|----------------|-------|
+| baseline | 59.9s | Fastest |
+| idle-no-alice | 61.9s | +3.3% overhead |
+| idle-full | 64.7s | +8.0% overhead |
 
-**Overhead**: idle-full adds ~6.5% latency on these simple tasks.
+**Overhead**: idle-full adds ~8% latency, idle-no-alice adds ~3% (review cost is ~5%).
 
 ## Analysis
 
