@@ -36,7 +36,7 @@ def run_claude_with_hooks(
 
     Uses pexpect to spawn Claude in interactive mode so hooks trigger.
     After Claude responds, sends /exit to trigger the Stop hook.
-    The idle plugin activates when #idle:on is in the prompt.
+    The idle plugin activates when #idle is in the prompt.
     """
     env = os.environ.copy()
     env.update(config.get("environment", {}))
@@ -45,9 +45,9 @@ def run_claude_with_hooks(
     if session_id is None:
         session_id = str(uuid.uuid4())
 
-    # Add #idle:on to prompt if idle is enabled
+    # Add #idle to prompt if idle is enabled
     if config.get("idle_enabled"):
-        prompt = f"#idle:on\n\n{prompt}"
+        prompt = f"#idle\n\n{prompt}"
 
     # Write prompt to a temp file
     prompt_file = work_dir / f"prompt_{session_id[:8]}.txt"
@@ -211,10 +211,10 @@ Start outputting the moves now:
         # Generate fresh session ID to avoid context pollution
         session_id = str(uuid.uuid4())
 
-        # Build prompt - add #idle:on for idle conditions
+        # Build prompt - add #idle for idle conditions
         full_prompt = prompt
         if config.get("idle_enabled"):
-            full_prompt = f"#idle:on\n\n{prompt}"
+            full_prompt = f"#idle\n\n{prompt}"
 
         # Use --print for all conditions (idle plugin now works in --print mode)
         env = dict(config.get("environment", {}))
