@@ -34,29 +34,27 @@ def run_claude_with_hooks(
     """
     Run Claude Code with hooks enabled (no --print flag).
 
-    Uses pexpect to spawn Claude in a pseudo-terminal so hooks trigger normally.
-    The Stop hook will fire when Claude tries to exit, automatically triggering
-    alice review for idle-full conditions.
+    Uses pexpect to spawn Claude in interactive mode so hooks trigger.
+    After Claude responds, sends /exit to trigger the Stop hook.
+    The idle plugin activates when #idle:on is in the prompt.
     """
     env = os.environ.copy()
     env.update(config.get("environment", {}))
-
-    # Apply idle_config if present (hooks, agents, skills directories)
-    idle_config = config.get("idle_config", {})
-    if idle_config.get("hooks_dir"):
-        env["CLAUDE_HOOKS_DIR"] = idle_config["hooks_dir"]
-    if idle_config.get("agents_dir"):
-        env["CLAUDE_AGENTS_DIR"] = idle_config["agents_dir"]
-    if idle_config.get("skills_dir"):
-        env["CLAUDE_SKILLS_DIR"] = idle_config["skills_dir"]
 
     # Generate session ID if not provided
     if session_id is None:
         session_id = str(uuid.uuid4())
 
-    # Escape prompt for shell
-    escaped_prompt = prompt.replace('"', '\\"').replace('$', '\\$')
-    cmd = f'claude --session-id {session_id} --dangerously-skip-permissions "{escaped_prompt}"'
+    # Add #idle:on to prompt if idle is enabled
+    if config.get("idle_enabled"):
+        prompt = f"#idle:on\n\n{prompt}"
+
+    # Write prompt to a temp file
+    prompt_file = work_dir / f"prompt_{session_id[:8]}.txt"
+    with open(prompt_file, 'w') as f:
+        f.write(prompt)
+
+    cmd = f'claude --session-id {session_id} --dangerously-skip-permissions'
 
     child = pexpect.spawn(
         '/bin/bash', ['-c', cmd],
@@ -64,23 +62,60 @@ def run_claude_with_hooks(
         env=env,
         timeout=timeout,
         encoding='utf-8',
-        dimensions=(50, 200)  # rows, cols
+        dimensions=(80, 200)
     )
 
     output_lines = []
     try:
+        # Wait for the initial prompt (Claude is ready for input)
+        child.expect([r'>', r'\$', pexpect.TIMEOUT], timeout=30)
+
+        # Send the prompt
+        with open(prompt_file) as f:
+            child.sendline(f.read())
+
+        # Collect output until we see the prompt again (Claude is done responding)
+        # Look for patterns that indicate Claude is waiting for input
         while True:
             try:
-                line = child.readline()
-                if not line:
+                # Match on common end-of-response patterns
+                index = child.expect([
+                    r'\n>',           # New prompt
+                    r'waiting for',   # Waiting message
+                    pexpect.TIMEOUT,
+                    pexpect.EOF
+                ], timeout=300)
+
+                output_lines.append(child.before)
+                if child.after and isinstance(child.after, str):
+                    output_lines.append(child.after)
+
+                if index == 0:  # Got new prompt - Claude is done
                     break
-                output_lines.append(line)
+                elif index in [2, 3]:  # Timeout or EOF
+                    break
+
             except pexpect.TIMEOUT:
                 break
             except pexpect.EOF:
                 break
+
+        # Send /exit to trigger the Stop hook
+        child.sendline('/exit')
+
+        # Wait for exit or hook interactions
+        try:
+            child.expect(pexpect.EOF, timeout=120)
+            output_lines.append(child.before)
+        except pexpect.TIMEOUT:
+            pass
+
     finally:
         child.close()
+        try:
+            prompt_file.unlink()
+        except:
+            pass
 
     return "".join(output_lines)
 
@@ -229,16 +264,12 @@ Start outputting the moves now:
             except (IndexError, KeyError, ValueError):
                 continue
 
-    # Validate moves
+    # Validate moves - track both validity and puzzle completion
     test_state = HanoiState.initial(n_disks)
+    optimal_length = 2 ** n_disks - 1
+    solved_at_step = None
 
     for i, (from_peg, to_peg) in enumerate(actual_moves):
-        if i >= max_steps:
-            break
-
-        # Determine expected move if within optimal path
-        expected = expected_moves[i] if i < len(expected_moves) else None
-        expected_str = f"{expected[0]}->{expected[1]}" if expected else "N/A"
         actual_str = f"{from_peg}->{to_peg}"
 
         # Check if move is valid for current state
@@ -246,21 +277,33 @@ Start outputting the moves now:
 
         if valid:
             test_state.apply_move(from_peg, to_peg)
-            # Check if it matches expected optimal move
-            correct = expected is not None and (from_peg, to_peg) == expected
-        else:
-            correct = False
+            # Check if puzzle is now solved
+            if test_state.pegs == goal.pegs and solved_at_step is None:
+                solved_at_step = i + 1
 
+        # For MAKER-style error tracking, an error is an INVALID move
+        # (Valid but non-optimal moves are still acceptable)
         step_results.append(StepResult(
             step_id=i,
-            expected=expected_str,
+            expected=f"valid_move",
             actual=actual_str,
-            correct=correct and valid,
-            error_type=None if (correct and valid) else ("invalid" if not valid else "suboptimal")
+            correct=valid,
+            error_type=None if valid else "invalid_move"
         ))
 
     # Check if puzzle was solved
     solved = test_state.pegs == goal.pegs
+
+    # Print diagnostic info
+    total_moves = len(actual_moves)
+    invalid_moves = sum(1 for s in step_results if not s.correct)
+    efficiency = optimal_length / total_moves if total_moves > 0 and solved else 0
+
+    print(f"    Moves made: {total_moves} (optimal: {optimal_length})")
+    print(f"    Invalid moves: {invalid_moves}")
+    print(f"    Solved: {solved} (at step {solved_at_step})" if solved else f"    Solved: {solved}")
+    if solved:
+        print(f"    Efficiency: {efficiency:.1%}")
 
     return step_results, solved
 
