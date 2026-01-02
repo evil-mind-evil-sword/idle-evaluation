@@ -211,27 +211,28 @@ Start outputting the moves now:
         # Generate fresh session ID to avoid context pollution
         session_id = str(uuid.uuid4())
 
-        if condition == "baseline":
-            # Use --print for baseline (fast, no hooks)
-            env = dict(config.get("environment", {}))
-            cmd = [
-                "claude", "--print",
-                "--session-id", session_id,
-                "--dangerously-skip-permissions",
-                prompt
-            ]
-            result = subprocess.run(
-                cmd,
-                cwd=work_dir,
-                capture_output=True,
-                text=True,
-                timeout=600,
-                env={**os.environ, **env}
-            )
-            output = result.stdout + result.stderr
-        else:
-            # Use pexpect for idle conditions (hooks enabled)
-            output = run_claude_with_hooks(prompt, work_dir, config, session_id=session_id, timeout=600)
+        # Build prompt - add #idle:on for idle conditions
+        full_prompt = prompt
+        if config.get("idle_enabled"):
+            full_prompt = f"#idle:on\n\n{prompt}"
+
+        # Use --print for all conditions (idle plugin now works in --print mode)
+        env = dict(config.get("environment", {}))
+        cmd = [
+            "claude", "--print",
+            "--session-id", session_id,
+            "--dangerously-skip-permissions",
+            full_prompt
+        ]
+        result = subprocess.run(
+            cmd,
+            cwd=work_dir,
+            capture_output=True,
+            text=True,
+            timeout=600,
+            env={**os.environ, **env}
+        )
+        output = result.stdout + result.stderr
 
         # Debug: save raw output
         debug_file = work_dir / f"debug_output_{session_id[:8]}.txt"
